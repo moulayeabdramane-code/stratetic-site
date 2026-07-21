@@ -1,0 +1,238 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body);
+  --font-heading: var(--font-heading);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-olive: var(--brand-olive);
+  --color-brand-offwhite: var(--brand-offwhite);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Agence Stratetic brand tokens (replaces iper.com.au source palette) */
+  --brand-navy: #0d2438;
+  --brand-olive: #96b912;
+  --brand-offwhite: #f5f5f0;
+  --gradient-accent: linear-gradient(90deg, var(--brand-navy) 0%, var(--brand-olive) 100%);
+  --gradient-accent-on-dark: linear-gradient(90deg, #ffffff 0%, var(--brand-olive) 100%);
+  --gradient-footer: linear-gradient(135deg, var(--brand-navy) 0%, #4b5c10 60%, var(--brand-olive) 100%);
+
+  --background: var(--brand-offwhite);
+  --foreground: var(--brand-navy);
+  --card: #ffffff;
+  --card-foreground: var(--brand-navy);
+  --popover: #ffffff;
+  --popover-foreground: var(--brand-navy);
+  --primary: var(--brand-navy);
+  --primary-foreground: var(--brand-offwhite);
+  --secondary: #eceae2;
+  --secondary-foreground: var(--brand-navy);
+  --muted: #eceae2;
+  --muted-foreground: #5b6b70;
+  --accent: var(--brand-olive);
+  --accent-foreground: var(--brand-navy);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #dcdad2;
+  --input: #dcdad2;
+  --ring: var(--brand-olive);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading uppercase tracking-tight;
+    font-weight: 900;
+  }
+}
+
+/* ---- Scroll-world (hero immersif) : thème du scrub engine ----
+   Le moteur injecte son CSS dans @layer sw ; ces règles non-layerées gagnent. */
+:root {
+  --sw-bg: var(--brand-offwhite);
+  --sw-ink: var(--brand-navy);
+  --sw-ink-soft: #5b6b70;
+  --sw-accent: var(--brand-olive);
+  --sw-font-display: var(--font-heading);
+  --sw-font-body: var(--font-body);
+}
+
+.sw-container .sw-sky,
+.sw-container .sw-scrollbar,
+.sw-container .sw-topbar,
+.sw-container .sw-stage,
+.sw-container .sw-copylayer,
+.sw-container .sw-route,
+.sw-container .sw-hint {
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+/* Le site utilise son propre HeaderNav : la topbar du moteur est vide mais
+   intercepte quand même les clics (bande fixe pleine largeur, z-50 au-dessus
+   du header) — c'est elle qui rendait le menu incliquable pendant le vol. */
+.sw-container .sw-topbar {
+  display: none;
+}
+/* Ces couches informatives ne doivent jamais bloquer un clic. */
+.sw-container .sw-hint,
+.sw-container .sw-scrollbar {
+  pointer-events: none;
+}
+
+/* Remonter les textes du vol : bloc centré un peu au-dessus du milieu sur
+   desktop (le -50% est préservé par le moteur patché), ancrage plus haut
+   sur mobile. */
+@media (min-width: 861px) {
+  .sw-container .sw-copy {
+    top: 44%;
+  }
+}
+@media (max-width: 860px) {
+  .sw-container .sw-copy {
+    bottom: calc(clamp(120px, 22dvh, 240px) + env(safe-area-inset-bottom));
+  }
+}
+
+/* Une fois le vol terminé (classe posée par ScrollWorldHero), on rend la main
+   aux sections classiques du site situées sous le monde. */
+.sw-container.sw-passed .sw-sky,
+.sw-container.sw-passed .sw-scrollbar,
+.sw-container.sw-passed .sw-topbar,
+.sw-container.sw-passed .sw-stage,
+.sw-container.sw-passed .sw-copylayer,
+.sw-container.sw-passed .sw-route,
+.sw-container.sw-passed .sw-hint {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@layer utilities {
+  .text-gradient-accent {
+    background-image: var(--gradient-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-accent-on-dark {
+    background-image: var(--gradient-accent-on-dark);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .bg-gradient-accent {
+    background-image: var(--gradient-accent);
+  }
+  .bg-gradient-footer {
+    background-image: var(--gradient-footer);
+  }
+}

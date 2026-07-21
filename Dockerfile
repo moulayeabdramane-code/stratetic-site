@@ -7,7 +7,10 @@ FROM node:20-slim AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+# npm install (et non npm ci) pour tolérer une dérive de version de npm entre
+# la machine qui a généré le lock (npm 11) et celle de l'image (npm 10) :
+# npm ci refuse à la moindre différence, npm install réconcilie.
+RUN npm install --no-audit --no-fund
 
 # --- Build ---
 FROM base AS builder

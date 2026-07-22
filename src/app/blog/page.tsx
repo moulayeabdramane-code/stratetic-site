@@ -28,7 +28,7 @@ const articles: Article[] = [
       "Tourner un documentaire à Diffa : les 4 choses qu'on aurait aimé savoir avant",
     excerpt:
       "Les contraintes logistiques, sécuritaires, linguistiques et humaines qu'on ne voit pas dans un brief.",
-    image: "/images/site/diffa-tournage.jpg",
+    image: "/images/site/diffa-tournage.webp",
   },
   {
     category: "Métier",

@@ -29,7 +29,7 @@ const blogPosts: BlogPost[] = [
 ];
 
 const blogImages = [
-  "/images/site/diffa-tournage.jpg",
+  "/images/site/diffa-tournage.webp",
   "/images/niger/blog-ong.webp",
   "/images/site/Kling.jpg",
 ];

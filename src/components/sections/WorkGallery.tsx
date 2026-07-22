@@ -80,7 +80,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Film de success story pour le programme d'agribusiness inclusif SNV, aux standards de reporting bailleurs internationaux.",
     placeholderLabel: "Agribusiness · ONG — Success story 2Scale SNV",
-    image: "/images/site/ONG.jpg",
+    image: "/images/site/ONG.webp",
   },
   {
     title: "AET — PROJET PISCCA, NIAMEY",
@@ -89,7 +89,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Retour vidéo sur le plaidoyer mené auprès de 50 filles-mères et mères célibataires — débats télévisés, radios communautaires en haoussa, société civile et autorités locales.",
     placeholderLabel: "Social · Genre · Niger — Film plaidoyer AET PISCCA",
-    image: "/images/site/diffa-tournage.jpg",
+    image: "/images/site/diffa-tournage.webp",
   },
 ];
 

@@ -81,7 +81,7 @@ export function NigerInfos() {
           <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-white/5">
             <div className="relative aspect-[4/3]">
               <Image
-                src="/images/site/screencapture-nigerinfos.jpg"
+                src="/images/site/screencapture-nigerinfos.webp"
                 alt="La une de nigerinfos.com"
                 fill
                 className="object-cover object-top"

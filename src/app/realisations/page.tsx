@@ -94,7 +94,7 @@ const projects: Project[] = [
     description:
       "Film de success story pour le programme d'agribusiness inclusif SNV, aux standards de reporting bailleurs internationaux.",
     tags: ["Success story", "Terrain Niger", "Bailleurs"],
-    image: "/images/site/ONG.jpg",
+    image: "/images/site/ONG.webp",
   },
   {
     category: "Social · Genre · Niger",
@@ -104,7 +104,7 @@ const projects: Project[] = [
     description:
       "Retour vidéo sur le plaidoyer mené auprès de 50 filles-mères et mères célibataires — débats télévisés, radios communautaires en haoussa, société civile et autorités locales.",
     tags: ["Film documentaire", "Plaidoyer", "Droits des femmes"],
-    image: "/images/site/diffa-tournage.jpg",
+    image: "/images/site/diffa-tournage.webp",
   },
 ];
 

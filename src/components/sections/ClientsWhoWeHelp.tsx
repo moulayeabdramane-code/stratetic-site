@@ -10,7 +10,7 @@ const clientNames: ClientName[] = [
   { name: "OIM" },
   { name: "ENABEL" },
   { name: "OXFAM" },
-  { name: "MERCY CORPS" },
+  { name: "ORANGE" },
   { name: "ACF" },
   { name: "SNV" },
   { name: "OIF" },
@@ -20,7 +20,7 @@ const clientNames: ClientName[] = [
   { name: "NIGER EMPLOI" },
   { name: "ANSI" },
   { name: "CIPMEN" },
-  { name: "BSIC" },
+  { name: "NIGER TÉLÉCOMS" },
 ];
 
 const audiences: AudienceCard[] = [

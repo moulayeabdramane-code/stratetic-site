@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Document, Page, pdfjs } from "react-pdf";
 import { CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
@@ -63,21 +63,42 @@ function BookletModal({
   const [displayPage, setDisplayPage] = useState(1);
   const [flipDir, setFlipDir] = useState<"next" | "prev" | null>(null);
   const [pageWidth, setPageWidth] = useState(420);
+  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
   const pageBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    // On charge le fichier entier en une fois plutôt que de laisser pdf.js
+    // faire ses requêtes HTTP Range habituelles : sur ce serveur, une requête
+    // Range avortée en cours de route corrompt le décodage (image jamais
+    // prête, page qui reste blanche).
+    fetch(pdfUrl)
+      .then((res) => res.arrayBuffer())
+      .then((buf) => {
+        if (!cancelled) setPdfData(buf);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [pdfUrl]);
+
+  // Un nouvel objet littéral `{ data: pdfData }` à chaque rendu ferait croire
+  // à react-pdf que le fichier a changé (recharge le Document en boucle).
+  const pdfFile = useMemo(() => (pdfData ? { data: pdfData } : null), [pdfData]);
+
+  const handleLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+  }, []);
 
   const goTo = useCallback(
     (target: number) => {
-      setPage((current) => {
-        if (!numPages || target < 1 || target > numPages || target === current) {
-          return current;
-        }
-        setFlipDir(target > current ? "next" : "prev");
-        window.setTimeout(() => setDisplayPage(target), 220);
-        window.setTimeout(() => setFlipDir(null), 460);
-        return target;
-      });
+      if (!numPages || target < 1 || target > numPages || target === page) return;
+      setFlipDir(target > page ? "next" : "prev");
+      setPage(target);
+      window.setTimeout(() => setDisplayPage(target), 220);
+      window.setTimeout(() => setFlipDir(null), 460);
     },
-    [numPages]
+    [numPages, page]
   );
 
   useEffect(() => {
@@ -93,11 +114,25 @@ function BookletModal({
   useEffect(() => {
     const el = pageBoxRef.current;
     if (!el) return;
-    const update = () => setPageWidth(el.clientWidth);
-    update();
+    // Le conteneur bouge un peu pendant que la mise en page se stabilise
+    // (police, layout du modal) : on débounce pour ne commettre la largeur
+    // qu'une fois calme, sinon <Page> relance son rendu pdf.js en boucle et
+    // annule le décodage d'image en cours (page qui reste blanche).
+    let timeout: ReturnType<typeof setTimeout>;
+    const commit = (width: number) => {
+      setPageWidth((prev) => (Math.abs(prev - width) > 2 ? width : prev));
+    };
+    const update = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => commit(el.clientWidth), 150);
+    };
+    commit(el.clientWidth);
     const observer = new ResizeObserver(update);
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeout);
+    };
   }, []);
 
   return (
@@ -130,20 +165,24 @@ function BookletModal({
             transformOrigin: flipDir === "prev" ? "right center" : "left center",
           }}
         >
-          <Document
-            file={pdfUrl}
-            loading={<BookletSkeleton />}
-            error={<BookletSkeleton />}
-            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-          >
-            <Page
-              pageNumber={displayPage}
-              width={Math.max(pageWidth, 1)}
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-              loading={<BookletSkeleton />}
-            />
-          </Document>
+          {pdfFile ? (
+            <Document
+              file={pdfFile}
+              loading={bookletSkeleton}
+              error={bookletSkeleton}
+              onLoadSuccess={handleLoadSuccess}
+            >
+              <Page
+                pageNumber={displayPage}
+                width={Math.max(pageWidth, 1)}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                loading={bookletSkeleton}
+              />
+            </Document>
+          ) : (
+            bookletSkeleton
+          )}
         </div>
 
         <div className="flex items-center justify-between mt-5 text-white">
@@ -178,3 +217,8 @@ function BookletModal({
 function BookletSkeleton() {
   return <div className="absolute inset-0 animate-pulse bg-brand-navy/10" />;
 }
+
+// Élément partagé et stable : un `loading={<BookletSkeleton />}` recréé à
+// chaque rendu casserait la mémoïsation interne de react-pdf et pourrait
+// interrompre le rendu pdf.js en plein décodage d'image.
+const bookletSkeleton = <BookletSkeleton />;

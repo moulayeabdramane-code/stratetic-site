@@ -216,6 +216,20 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Effet de page qui se tourne pour le lecteur de livret PDF (réalisations). */
+@keyframes page-flip {
+  0%,
+  100% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(85deg);
+  }
+}
+.animate-page-flip {
+  animation: page-flip 460ms ease-in-out;
+}
+
 @layer utilities {
   .text-gradient-accent {
     background-image: var(--gradient-accent);

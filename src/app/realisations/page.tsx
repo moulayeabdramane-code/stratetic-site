@@ -5,6 +5,7 @@ import { PageHero } from "@/components/sections/PageHero";
 import { CtaFooter } from "@/components/sections/CtaFooter";
 import { TestimonialsSection } from "@/components/sections/BlogTestimonials";
 import { Reveal } from "@/components/motion/Reveal";
+import { PdfBooklet } from "@/components/sections/PdfBookletLazy";
 
 export const metadata: Metadata = {
   title: "Réalisations — STRATETIC",
@@ -17,8 +18,10 @@ const ARISE_URL = "https://arisekeneya.org/";
 
 interface Project {
   slug: string;
-  /** ID YouTube du film — absent pour ARISE (projet site web). */
+  /** ID YouTube du film — absent pour ARISE (projet site web) et CPTP (catalogue PDF). */
   ytId?: string;
+  /** PDF feuilletable — présent uniquement pour le catalogue CPTP. */
+  pdfUrl?: string;
   category: string;
   title: string;
   description: string;
@@ -106,6 +109,16 @@ const projects: Project[] = [
     tags: ["Film documentaire", "Plaidoyer", "Droits des femmes"],
     image: "/images/site/diffa-tournage.webp",
   },
+  {
+    category: "Institution publique · Formation",
+    slug: "cptp-catalogue",
+    title: "CPTP — Catalogue des formations 2026",
+    description:
+      "Conception graphique et mise en page du catalogue annuel des formations du Centre de Perfectionnement des Travaux Publics de Niamey — direction artistique complète, de la couverture au dernier module.",
+    tags: ["Design graphique", "Mise en page", "Catalogue institutionnel"],
+    image: "/images/site/catalogue-cptp-cover.webp",
+    pdfUrl: "/documents/catalogue-formations-cptp-2026.pdf",
+  },
 ];
 
 export default function RealisationsPage() {
@@ -115,8 +128,8 @@ export default function RealisationsPage() {
       <main className="flex-1">
         <PageHero
           eyebrow="Réalisations"
-          title="Huit projets, huit univers."
-          intro="Plus de 100 projets livrés depuis 2013 pour des ONG, entreprises et institutions. En voici huit qui racontent l'étendue de ce qu'on sait faire."
+          title="Neuf projets, neuf univers."
+          intro="Plus de 100 projets livrés depuis 2013 pour des ONG, entreprises et institutions. En voici neuf qui racontent l'étendue de ce qu'on sait faire."
         />
 
         <section className="bg-brand-offwhite py-24 px-6 md:px-10">
@@ -134,6 +147,12 @@ export default function RealisationsPage() {
                         loading="lazy"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
+                      />
+                    ) : project.pdfUrl ? (
+                      <PdfBooklet
+                        pdfUrl={project.pdfUrl}
+                        coverImage={project.image}
+                        title={project.title}
                       />
                     ) : (
                       <a

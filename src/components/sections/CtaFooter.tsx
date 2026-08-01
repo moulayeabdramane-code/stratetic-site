@@ -167,12 +167,36 @@ export function CtaFooter() {
               Un article par mois, c&apos;est tout.
             </p>
           </div>
-          <a
-            href="mailto:contact@stratetic.art?subject=Inscription%20newsletter"
-            className="bg-gradient-accent text-white font-heading uppercase text-sm px-6 py-3 rounded-full self-start md:self-auto"
+          <form
+            action="https://c0297a8c.sibforms.com/serve/MUIFAApPdt6sqn_fO2wKWSbkwVCQfIylyZzSJlMFE4I0f_RgE4TLe6YmwfbfkNVHn_aLsgcqYvtAOuFIBN8C1QFLrHEHFExUFC54xhW2RLgqU7zAlDY__9dITUn4fdT1gknU0Uhc8yXAACK8qtjjknj5ToH1gpAp3d5CSPvVaSYhonBqIpaIjkpGIzj3p6Xnsch52aanYTdOOx-Xuw=="
+            method="POST"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:max-w-md"
           >
-            S&apos;abonner
-          </a>
+            <input
+              type="email"
+              name="EMAIL"
+              required
+              placeholder="Votre adresse email"
+              className="flex-1 min-w-0 rounded-full bg-white/10 border border-white/20 px-5 py-3 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white/40"
+            />
+            <input
+              type="text"
+              name="email_address_check"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
+            <input type="hidden" name="locale" value="fr" />
+            <button
+              type="submit"
+              className="bg-gradient-accent text-white font-heading uppercase text-sm px-6 py-3 rounded-full shrink-0"
+            >
+              S&apos;abonner
+            </button>
+          </form>
         </div>
 
         <div className="pt-8 text-white/60 text-sm">

@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Document, Page, pdfjs } from "react-pdf";
+import HTMLFlipBook from "react-pageflip";
+import type { FlipEvent, PageFlipHandle } from "react-pageflip";
 import { CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
@@ -44,7 +47,11 @@ export function PdfBooklet({ pdfUrl, coverImage, title }: PdfBookletProps) {
           Feuilleter le catalogue →
         </span>
       </button>
-      {open && <BookletModal pdfUrl={pdfUrl} title={title} onClose={() => setOpen(false)} />}
+      {open &&
+        createPortal(
+          <BookletModal pdfUrl={pdfUrl} title={title} onClose={() => setOpen(false)} />,
+          document.body
+        )}
     </>
   );
 }
@@ -59,12 +66,9 @@ function BookletModal({
   onClose: () => void;
 }) {
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [page, setPage] = useState(1);
-  const [displayPage, setDisplayPage] = useState(1);
-  const [flipDir, setFlipDir] = useState<"next" | "prev" | null>(null);
-  const [pageWidth, setPageWidth] = useState(420);
+  const [currentPage, setCurrentPage] = useState(0);
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
-  const pageBoxRef = useRef<HTMLDivElement>(null);
+  const flipBookRef = useRef<PageFlipHandle>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -90,50 +94,41 @@ function BookletModal({
     setNumPages(numPages);
   }, []);
 
-  const goTo = useCallback(
-    (target: number) => {
-      if (!numPages || target < 1 || target > numPages || target === page) return;
-      setFlipDir(target > page ? "next" : "prev");
-      setPage(target);
-      window.setTimeout(() => setDisplayPage(target), 220);
-      window.setTimeout(() => setFlipDir(null), 460);
-    },
-    [numPages, page]
-  );
+  const handleFlip = useCallback((e: FlipEvent) => {
+    setCurrentPage(e.data);
+  }, []);
+
+  const goNext = useCallback(() => flipBookRef.current?.pageFlip().flipNext(), []);
+  const goPrev = useCallback(() => flipBookRef.current?.pageFlip().flipPrev(), []);
+
+  // react-pageflip recrée toute son instance dès que la référence de
+  // `children` change : un `Array.from(...)` inline serait un nouveau
+  // tableau (et de nouveaux éléments) à chaque rendu, empêchant le livret
+  // de jamais finir son initialisation (pages qui restent display:none).
+  const pageNodes = useMemo(() => {
+    if (!numPages) return null;
+    return Array.from({ length: numPages }, (_, i) => (
+      <div key={i} className="pdf-booklet-page bg-white overflow-hidden">
+        <Page
+          pageNumber={i + 1}
+          width={700}
+          renderTextLayer={false}
+          renderAnnotationLayer={false}
+          loading={bookletSkeleton}
+        />
+      </div>
+    ));
+  }, [numPages]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") goTo(page + 1);
-      if (e.key === "ArrowLeft") goTo(page - 1);
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowLeft") goPrev();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [goTo, onClose, page]);
-
-  useEffect(() => {
-    const el = pageBoxRef.current;
-    if (!el) return;
-    // Le conteneur bouge un peu pendant que la mise en page se stabilise
-    // (police, layout du modal) : on débounce pour ne commettre la largeur
-    // qu'une fois calme, sinon <Page> relance son rendu pdf.js en boucle et
-    // annule le décodage d'image en cours (page qui reste blanche).
-    let timeout: ReturnType<typeof setTimeout>;
-    const commit = (width: number) => {
-      setPageWidth((prev) => (Math.abs(prev - width) > 2 ? width : prev));
-    };
-    const update = () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => commit(el.clientWidth), 150);
-    };
-    commit(el.clientWidth);
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      clearTimeout(timeout);
-    };
-  }, []);
+  }, [goNext, goPrev, onClose]);
 
   return (
     <div
@@ -153,56 +148,65 @@ function BookletModal({
       </button>
 
       <div
-        className="relative w-full max-w-sm md:max-w-md [perspective:2000px]"
+        className="relative w-full max-w-4xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          ref={pageBoxRef}
-          className={`relative aspect-[210/297] rounded-lg overflow-hidden shadow-2xl bg-white ${
-            flipDir ? "animate-page-flip" : ""
-          }`}
-          style={{
-            transformOrigin: flipDir === "prev" ? "right center" : "left center",
-          }}
-        >
+        <div className="w-full">
           {pdfFile ? (
             <Document
               file={pdfFile}
-              loading={bookletSkeleton}
-              error={bookletSkeleton}
+              loading={bookletSkeletonBox}
+              error={bookletSkeletonBox}
               onLoadSuccess={handleLoadSuccess}
             >
-              <Page
-                pageNumber={displayPage}
-                width={Math.max(pageWidth, 1)}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-                loading={bookletSkeleton}
-              />
+              {numPages ? (
+                <HTMLFlipBook
+                  ref={flipBookRef}
+                  width={360}
+                  height={509}
+                  size="stretch"
+                  minWidth={220}
+                  maxWidth={520}
+                  minHeight={311}
+                  maxHeight={735}
+                  showCover
+                  usePortrait
+                  mobileScrollSupport={false}
+                  maxShadowOpacity={0.5}
+                  drawShadow
+                  className="pdf-booklet mx-auto"
+                  style={{ width: "100%", height: "min(70vh, 720px)" }}
+                  onFlip={handleFlip}
+                >
+                  {pageNodes}
+                </HTMLFlipBook>
+              ) : (
+                bookletSkeletonBox
+              )}
             </Document>
           ) : (
-            bookletSkeleton
+            bookletSkeletonBox
           )}
         </div>
 
         <div className="flex items-center justify-between mt-5 text-white">
           <button
             type="button"
-            onClick={() => goTo(page - 1)}
-            disabled={page <= 1}
+            onClick={goPrev}
+            disabled={currentPage <= 0}
             className="disabled:opacity-30 bg-white/10 hover:bg-white/20 rounded-full p-3 transition-colors"
             aria-label="Page précédente"
           >
             <ChevronLeftIcon className="w-5 h-5" />
           </button>
           <p className="text-sm font-medium tabular-nums">
-            Page {page}
+            Page {currentPage + 1}
             {numPages ? ` / ${numPages}` : ""}
           </p>
           <button
             type="button"
-            onClick={() => goTo(page + 1)}
-            disabled={!numPages || page >= numPages}
+            onClick={goNext}
+            disabled={!numPages || currentPage >= numPages - 1}
             className="disabled:opacity-30 bg-white/10 hover:bg-white/20 rounded-full p-3 transition-colors"
             aria-label="Page suivante"
           >
@@ -218,7 +222,16 @@ function BookletSkeleton() {
   return <div className="absolute inset-0 animate-pulse bg-brand-navy/10" />;
 }
 
-// Élément partagé et stable : un `loading={<BookletSkeleton />}` recréé à
-// chaque rendu casserait la mémoïsation interne de react-pdf et pourrait
-// interrompre le rendu pdf.js en plein décodage d'image.
+function BookletSkeletonBox() {
+  return (
+    <div className="relative aspect-[210/297] w-full max-w-sm rounded-lg overflow-hidden shadow-2xl bg-white">
+      <BookletSkeleton />
+    </div>
+  );
+}
+
+// Éléments partagés et stables : recréer `<BookletSkeleton />` à chaque rendu
+// (ex: `loading={<BookletSkeleton />}`) casserait la mémoïsation interne de
+// react-pdf et pourrait interrompre le rendu pdf.js en plein décodage d'image.
 const bookletSkeleton = <BookletSkeleton />;
+const bookletSkeletonBox = <BookletSkeletonBox />;

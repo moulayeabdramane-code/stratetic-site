@@ -18,6 +18,9 @@ type GalleryCaseStudy = CaseStudy & {
   external?: string;
 };
 
+/** Miniature YouTube générée automatiquement pour chaque vidéo (toujours disponible, contrairement à maxresdefault). */
+const ytThumb = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+
 const caseStudies: GalleryCaseStudy[] = [
   {
     title: "CDS NIGER — FORUM FIER/JNER 2026",
@@ -26,7 +29,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Campagne complète pour le forum sur les énergies renouvelables. Spot audiovisuel, 7 supports print et déclinaisons réseaux sociaux.",
     placeholderLabel: "Énergie · Privé — Campagne complète CDS Niger",
-    image: "/images/niger/work-cds.webp",
+    image: ytThumb("7KosqdnyWXk"),
   },
   {
     title: "ARISE / KENEYA YIRIWALI (MALI)",
@@ -44,7 +47,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Spot dynamique multi-formats pour la principale plateforme d'offres d'emploi du Niger.",
     placeholderLabel: "Digital · Emploi — Spot Niger Emploi",
-    image: "/images/niger/work-nigeremploi.webp",
+    image: ytThumb("1UfF72OEsmM"),
   },
   {
     title: "ANSI — TABLE RONDE DES BAILLEURS, PARIS",
@@ -53,7 +56,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Spot institutionnel haute exigence, projeté lors de la table ronde internationale pour la transformation numérique du Niger.",
     placeholderLabel: "Institution publique — Film institutionnel ANSI",
-    image: "/images/niger/work-ansi.webp",
+    image: ytThumb("NjAKRQmZIbQ"),
   },
   {
     title: "CIPMEN — FILM ENTREPRENEURIAT",
@@ -62,7 +65,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Film documentaire sur les parcours d'entrepreneurs accompagnés par le centre d'incubation nigérien.",
     placeholderLabel: "Entrepreneuriat · Niger — Film documentaire CIPMEN",
-    image: "/images/niger/work-cipmen.webp",
+    image: ytThumb("7e2KbO8m21Q"),
   },
   {
     title: "COMPLAIT — SPOT PUBLICITAIRE",
@@ -71,7 +74,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Spot court et percutant conçu et produit de A à Z — concept, tournage, montage et motion design.",
     placeholderLabel: "Communication · Spot — COMPLAIT",
-    image: "/images/niger/work-complait.webp",
+    image: ytThumb("_AplCctINfE"),
   },
   {
     title: "2SCALE / SNV — SUCCESS STORY",
@@ -80,7 +83,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Film de success story pour le programme d'agribusiness inclusif SNV, aux standards de reporting bailleurs internationaux.",
     placeholderLabel: "Agribusiness · ONG — Success story 2Scale SNV",
-    image: "/images/site/ONG.webp",
+    image: ytThumb("QhqzRDhcfck"),
   },
   {
     title: "AET — PROJET PISCCA, NIAMEY",
@@ -89,7 +92,7 @@ const caseStudies: GalleryCaseStudy[] = [
     description:
       "Retour vidéo sur le plaidoyer mené auprès de 50 filles-mères et mères célibataires — débats télévisés, radios communautaires en haoussa, société civile et autorités locales.",
     placeholderLabel: "Social · Genre · Niger — Film plaidoyer AET PISCCA",
-    image: "/images/site/diffa-tournage.webp",
+    image: ytThumb("KPwU07osF80"),
   },
 ];
 

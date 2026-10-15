@@ -1,0 +1,208 @@
+/*
+ * Gabarit de facture — reproduction du modèle de facture STRATETIC fourni.
+ *
+ * Toutes les cotes sont en px CSS (1 px = 0,75 pt) : le modèle a été produit par
+ * Chromium à partir d'une page A4 de 793,7 × 1122,5 px. Les positions sont donc
+ * reprises telles quelles (marges 40 px, bandeau 108 px, etc.).
+ * Les couleurs proviennent de config/settings.json (variables --c-*).
+ */
+
+@font-face { font-family: 'Figtree'; font-weight: 400; font-style: normal; src: url('fonts/figtree-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Figtree'; font-weight: 500; font-style: normal; src: url('fonts/figtree-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Figtree'; font-weight: 600; font-style: normal; src: url('fonts/figtree-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Figtree'; font-weight: 700; font-style: normal; src: url('fonts/figtree-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Figtree'; font-weight: 400; font-style: italic; src: url('fonts/figtree-latin-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Jost'; font-weight: 500; font-style: normal; src: url('fonts/jost-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Jost'; font-weight: 600; font-style: normal; src: url('fonts/jost-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Jost'; font-weight: 700; font-style: normal; src: url('fonts/jost-latin-700-normal.woff2') format('woff2'); }
+
+@page { size: A4; margin: 0; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-family: 'Figtree', sans-serif;
+  color: var(--c-text);
+  font-kerning: normal;
+}
+
+/* Aperçu à l'écran : pages posées sur un fond gris */
+@media screen {
+  body { background: #e6e8e3; padding: 24px 0; }
+  .page { margin: 0 auto 24px; box-shadow: 0 2px 12px rgba(0, 0, 0, .18); }
+}
+
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: #fff;
+  page-break-after: always;
+  break-after: page;
+}
+.page:last-child { page-break-after: auto; break-after: auto; }
+
+/* ---------- Libellés espacés (Futura → Jost) ---------- */
+.label {
+  font-family: 'Jost', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 13px;
+  letter-spacing: .18em;
+  color: var(--c-green-dark);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------- En-tête ---------- */
+.band { position: absolute; left: 0; top: 0; width: 100%; height: 108px; background: var(--c-navy); }
+.band-strip { position: absolute; left: 0; top: 108px; width: 100%; height: 4px; background: var(--c-green); }
+.logo { position: absolute; left: 40px; top: 32px; width: 218px; height: 48px; object-fit: contain; object-position: left center; }
+.doc-title {
+  position: absolute; right: 41px; top: 34px;
+  font-family: 'Jost', sans-serif; font-weight: 600; font-size: 26px; line-height: 34px;
+  color: #fff; white-space: nowrap;
+}
+.doc-title-bar { position: absolute; right: 40px; top: 72px; width: 48px; height: 3px; background: var(--c-green); }
+
+/* ---------- Parties (émetteur / client) ---------- */
+.party { position: absolute; top: 149px; }
+.party.issuer { left: 40px; width: 250px; }
+.party.client { left: 296.8px; width: 250px; }
+.party .name {
+  margin-top: 14px;
+  font-weight: 700; font-size: 16px; line-height: 22px; letter-spacing: -.02em;
+  color: var(--c-navy);
+}
+.party .lines { margin-top: 6px; font-size: 12px; line-height: 20px; letter-spacing: -.008em; }
+.party .ids { margin-top: 9px; font-size: 10px; line-height: 16px; letter-spacing: -.03em; color: var(--c-muted); }
+
+/* ---------- Cartouche (numéro / dates) ---------- */
+.meta {
+  position: absolute; left: 554.5px; top: 148.5px; width: 199.3px; height: 190px;
+  background: var(--c-panel); border: 1px solid var(--c-line); border-radius: 6px;
+  padding: 16px 16px 0 15.2px;
+}
+.meta .label { font-size: 9px; line-height: 12px; color: var(--c-muted); }
+.meta .num {
+  margin-top: 5px;
+  font-family: 'Jost', sans-serif; font-weight: 500; font-size: 15px; line-height: 20px;
+  letter-spacing: -.02em; color: var(--c-navy);
+}
+.meta .date { margin-top: 5px; font-weight: 600; font-size: 13px; line-height: 17px; color: var(--c-navy); }
+.meta .sep { height: 1px; background: var(--c-line); margin: 12px 0 11px; }
+.meta .sep ~ .sep { margin: 13px 0 10px; }
+
+/* ---------- Tableau des lignes ---------- */
+.items { position: absolute; left: 40px; width: 714px; }
+.grid {
+  display: grid;
+  grid-template-columns: 64px 313.6px 80px 116px 120.1px;
+  padding-right: 20.3px;
+}
+.thead {
+  height: 40px; align-items: center;
+  background: var(--c-navy); border-radius: 6px 6px 0 0;
+}
+.thead > div {
+  font-family: 'Jost', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: .06em;
+  color: var(--c-header-text); text-transform: uppercase; white-space: nowrap;
+  position: relative; top: -1px;
+}
+.c-no { padding-left: 20px; text-align: center; }
+.c-des { padding-right: 17.6px; }
+.c-qty { text-align: center; }
+.c-pu, .c-tot { text-align: right; }
+
+.row { padding: 14px 0 14px; border-bottom: 1px solid var(--c-line); align-items: start; }
+.row .c-no {
+  font-family: 'Jost', sans-serif; font-weight: 700; font-size: 12px; line-height: 19px;
+  letter-spacing: .12em; color: var(--c-green-dark);
+}
+.row .des { font-weight: 500; font-size: 13px; line-height: 19px; letter-spacing: -.01em; color: var(--c-navy); }
+.row .det { margin-top: 4px; font-size: 11px; line-height: 16px; letter-spacing: -.01em; color: var(--c-muted); white-space: pre-line; }
+.row .disc { margin-top: 2px; font-size: 11px; line-height: 16px; letter-spacing: -.01em; color: var(--c-green-dark); }
+.row .c-qty { font-size: 13px; line-height: 19px; color: var(--c-text); }
+.row .c-pu { font-size: 13px; line-height: 19px; color: var(--c-dark); }
+.row .c-tot { font-weight: 700; font-size: 13px; line-height: 19px; color: var(--c-navy); }
+.row.continued { border-top: 0; }
+
+/* ---------- Totaux ---------- */
+.totals { position: absolute; left: 454px; width: 300px; }
+.trow {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 0; font-size: 13px; line-height: 17px;
+}
+.trow .k { letter-spacing: -.02em; color: var(--c-text); }
+.trow .v { font-weight: 600; letter-spacing: -.008em; color: var(--c-navy); white-space: nowrap; }
+.trow .v.muted { color: var(--c-muted); }
+.trow.last { border-bottom: 1px solid var(--c-line); }
+.net {
+  margin-top: 10px; height: 64px; padding: 0 16px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  background: var(--c-navy); border-radius: 6px;
+}
+.net .k {
+  padding-top: 27px;
+  font-family: 'Jost', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: .17em;
+  color: var(--c-header-text); white-space: nowrap;
+}
+.net .v {
+  font-family: 'Jost', sans-serif; font-weight: 500; font-size: 22px; letter-spacing: -.04em;
+  color: var(--c-green); white-space: nowrap;
+}
+/* Variante compacte (cf. paginate.js) */
+.totals.compact .trow { padding: 5px 0; }
+.totals.compact .net { margin-top: 8px; }
+.words.side { width: 390px; align-items: flex-start; flex-direction: column; gap: 4px; padding: 14px 20px; }
+.counter-value { margin-top: 8px; text-align: right; font-size: 10px; line-height: 14px; color: var(--c-muted); }
+
+/* ---------- Montant en lettres ---------- */
+.words {
+  position: absolute; left: 40px; width: 714px; min-height: 48px;
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 20px; background: var(--c-highlight); border-radius: 6px;
+}
+.words .label { flex: none; }
+.words .text { font-style: italic; font-size: 13px; line-height: 18px; letter-spacing: -.02em; color: var(--c-navy); }
+
+/* ---------- Bas de page : conditions / banque ---------- */
+.bottom { position: absolute; left: 40px; top: 896px; width: 714px; border-top: 1px solid var(--c-line); }
+.bottom .col { position: absolute; top: 25px; }
+.bottom .col.cond { left: 0; width: 360px; }
+.bottom .col.bank { left: 372.8px; width: 230px; }
+.bottom .body { margin-top: 13px; font-size: 11px; line-height: 18.7px; letter-spacing: -.015em; white-space: pre-line; }
+.bottom .bank-name { font-weight: 600; color: var(--c-dark); letter-spacing: -.02em; }
+.qr { position: absolute; right: 0; top: 23px; width: 76px; text-align: center; }
+.qr svg { display: block; width: 76px; height: 76px; }
+.qr .cap { margin-top: 3px; font-size: 8px; line-height: 10px; color: var(--c-muted); letter-spacing: .02em; }
+
+/* ---------- Pied de page (toutes les pages) ---------- */
+.foot-rule { position: absolute; left: 0; top: 1073px; width: 100%; height: 3px; background: var(--c-navy); }
+.foot-accent { position: absolute; left: 0; top: 1076px; width: 80px; height: 3px; background: var(--c-green); }
+.foot { position: absolute; left: 40px; top: 1094px; width: 714px; font-size: 10px; line-height: 14px; letter-spacing: -.022em; color: var(--c-muted); white-space: nowrap; }
+.foot .r { position: absolute; right: 0; top: 0; }
+.foot .pg { position: absolute; left: 50%; transform: translateX(-50%); }
+
+/* ---------- Pages de suite ---------- */
+.cont-head { position: absolute; left: 40px; top: 36px; width: 714px; display: flex; justify-content: space-between; align-items: baseline; }
+.cont-head .t { font-family: 'Jost', sans-serif; font-weight: 600; font-size: 15px; color: var(--c-navy); }
+.cont-head .n { font-family: 'Jost', sans-serif; font-weight: 500; font-size: 13px; color: var(--c-muted); }
+
+/* ---------- Conditions générales (page annexe) ---------- */
+.terms { position: absolute; left: 40px; top: 96px; width: 714px; }
+.terms .body { margin-top: 14px; font-size: 10px; line-height: 15px; color: var(--c-text); white-space: pre-line; column-count: 2; column-gap: 28px; }
+
+/* ---------- Filigrane PROFORMA ---------- */
+.watermark {
+  position: absolute; left: 50%; top: 52%;
+  transform: translate(-50%, -50%) rotate(-35deg);
+  font-family: 'Jost', sans-serif; font-weight: 700; font-size: 130px; letter-spacing: .08em;
+  color: var(--c-navy); opacity: .05; white-space: nowrap; pointer-events: none; z-index: 5;
+}
+
+/* Mesure hors écran utilisée par la pagination */
+#measure { position: absolute; left: -10000px; top: 0; width: 714px; visibility: hidden; }

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Application de facturation (projet séparé, voir facturation/README.md)
+    "facturation/**",
   ]),
 ]);
 

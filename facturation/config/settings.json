@@ -1,0 +1,100 @@
+{
+  "issuer": {
+    "name": "AGENCE STRATETIC",
+    "shortName": "Agence STRATETIC",
+    "addressLines": [
+      "Rpd Salou Djibo, Quartier Banifandou 2",
+      "Niamey, Niger"
+    ],
+    "email": "contact@stratetic.art",
+    "phone": "(+227) 97 72 72 80",
+    "legalIds": [
+      { "label": "NIF", "value": "144379 / P" },
+      { "label": "RC", "value": "NE/NIM/01/2025/A10/05208" }
+    ],
+    "logo": "assets/logo.png"
+  },
+  "bank": {
+    "name": "CORIS BANK INTERNATIONAL",
+    "lines": [
+      "Code Banque : NE210 — Guichet : 01003",
+      "Compte : 003474924101 — Clé : 56",
+      "IBAN : NE58 NE21 0010 0300 3474 9241 0156",
+      "SWIFT : CORINENI"
+    ]
+  },
+  "footer": {
+    "left": "AGENCE STRATETIC — Rpd Salou Djibo, Banifandou 2, Niamey",
+    "right": "stratetic.art | nigerinfos.com | contact@stratetic.art"
+  },
+  "documents": {
+    "titles": { "facture": "FACTURE", "proforma": "PROFORMA" },
+    "numberLabels": { "facture": "N° FACTURE", "proforma": "N° PROFORMA" },
+    "dueLabels": { "facture": "ÉCHÉANCE", "proforma": "VALIDITÉ" },
+    "clientLabel": "FACTURÉ À",
+    "issuerLabel": "ÉMETTEUR",
+    "amountInWordsLabel": "ARRÊTÉE À :",
+    "conditionsLabel": "CONDITIONS",
+    "bankLabel": "COORDONNÉES BANCAIRES",
+    "defaultConditions": "Paiement à réception de facture.\nVirement bancaire à l'ordre d'Agence STRATETIC.",
+    "legalMentions": "",
+    "generalTerms": "",
+    "paymentTermsDays": { "facture": 30, "proforma": 30 },
+    "paymentMethods": ["Virement bancaire", "Espèces", "Chèque", "Mobile Money"],
+    "watermark": { "proforma": true, "text": "PROFORMA" },
+    "qrCode": { "enabled": true, "caption": "Vérification" }
+  },
+  "theme": {
+    "navy": "#022539",
+    "green": "#A1BE01",
+    "greenDark": "#7E9700",
+    "text": "#5F665B",
+    "muted": "#8B9387",
+    "dark": "#353A32",
+    "panel": "#F4F6F1",
+    "line": "#D6DBD2",
+    "highlight": "#EEF6C7",
+    "headerText": "#F4F6F1"
+  },
+  "numbering": {
+    "reset": "annual",
+    "format": "{PREFIX}-{YEAR}-{SEQ}",
+    "padding": 3,
+    "prefixes": { "facture": "FAC", "proforma": "PRO" },
+    "start": {
+      "facture": { "2026": 44 },
+      "proforma": {}
+    }
+  },
+  "baseCurrency": "XOF",
+  "currencies": [
+    {
+      "code": "XOF", "label": "FCFA", "decimals": 0, "rate": 1,
+      "words": { "singular": "franc CFA", "plural": "francs CFA" }
+    },
+    {
+      "code": "EUR", "label": "EUR", "decimals": 2, "rate": 655.957,
+      "words": { "singular": "euro", "plural": "euros", "subSingular": "centime", "subPlural": "centimes" }
+    },
+    {
+      "code": "USD", "label": "USD", "decimals": 2, "rate": 600,
+      "words": { "singular": "dollar américain", "plural": "dollars américains", "subSingular": "cent", "subPlural": "cents" }
+    }
+  ],
+  "vatRates": [0, 19],
+  "defaultVatRate": 0,
+  "email": {
+    "mode": "mailto",
+    "smtp": {
+      "host": "smtp.mail.yahoo.com",
+      "port": 465,
+      "secure": true,
+      "user": "",
+      "from": "Agence STRATETIC <contact@stratetic.art>"
+    },
+    "subject": "{TITLE} {NUMBER} — Agence STRATETIC",
+    "body": "Bonjour,\n\nVeuillez trouver ci-joint notre {TITLE_LOWER} n° {NUMBER} d'un montant de {AMOUNT}, à régler avant le {DUE}.\n\nCordialement,\nAgence STRATETIC"
+  },
+  "server": { "port": 3210, "host": "0.0.0.0" },
+  "pdf": { "browserPath": "" }
+}

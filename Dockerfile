@@ -1,7 +1,8 @@
 # Dockerfile de production pour Coolify — Next.js 16 en sortie autonome.
 # Image Debian slim (glibc) pour éviter les soucis de binaires natifs.
 
-FROM node:20-slim AS base
+# Node 22 : version de référence de Payload 3 (>= 20.18.1 requis).
+FROM node:22-slim AS base
 
 # --- Dépendances ---
 FROM base AS deps
@@ -27,14 +28,26 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
+# Données Payload sur le volume Coolify monté sur /data.
+ENV DATABASE_URI=file:/data/stratetic.db
+ENV MEDIA_DIR=/data/media
+ENV BACKUP_DIR=/data/backups
+# Sans PAYLOAD_SECRET, le secret est généré au 1er démarrage et gardé ici.
+ENV PAYLOAD_SECRET_FILE=/data/.payload-secret
 
 RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs
+  && adduser --system --uid 1001 nextjs \
+  && mkdir -p /data/media /data/backups \
+  && chown -R nextjs:nodejs /data
 
 # Le serveur autonome + les assets statiques + le dossier public.
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Sauvegarde nocturne (tâche planifiée Coolify : node scripts/backup-db.mjs)
+# et healthcheck Coolify (node scripts/healthcheck.mjs — pas de curl dans l'image).
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/backup-db.mjs ./scripts/backup-db.mjs
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/healthcheck.mjs ./scripts/healthcheck.mjs
 
 USER nextjs
 EXPOSE 3000

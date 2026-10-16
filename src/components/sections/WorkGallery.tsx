@@ -4,112 +4,30 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { PlayIcon, CloseIcon } from "@/components/icons";
 import { Reveal } from "@/components/motion/Reveal";
-import type { CaseStudy } from "@/types/content";
+import { titreProjets } from "@/lib/nombres";
+import type { RealisationView } from "@/lib/realisations";
 
-// Site ARISE / Keneya Yiriwali réalisé par STRATETIC.
-const ARISE_URL = "https://arisekeneya.org/";
-
-type GalleryCaseStudy = CaseStudy & {
-  image: string;
-  slug: string;
-  /** ID YouTube du film — absent pour ARISE (projet site web). */
-  ytId?: string;
-  /** Lien externe (site livré) pour les projets sans vidéo. */
-  external?: string;
+const ACTION_LABEL: Record<RealisationView["type"], string> = {
+  video: "▶ Regarder le film",
+  website: "Visiter le site →",
+  pdf: "Feuilleter le document →",
 };
 
-/** Miniature YouTube générée automatiquement pour chaque vidéo (toujours disponible, contrairement à maxresdefault). */
-const ytThumb = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-
-const caseStudies: GalleryCaseStudy[] = [
-  {
-    title: "CDS NIGER — FORUM FIER/JNER 2026",
-    slug: "cds-niger",
-    ytId: "7KosqdnyWXk",
-    description:
-      "Campagne complète pour le forum sur les énergies renouvelables. Spot audiovisuel, 7 supports print et déclinaisons réseaux sociaux.",
-    placeholderLabel: "Énergie · Privé — Campagne complète CDS Niger",
-    image: ytThumb("7KosqdnyWXk"),
-  },
-  {
-    title: "ARISE / KENEYA YIRIWALI (MALI)",
-    slug: "arise-mali",
-    external: ARISE_URL,
-    description:
-      "Site de présentation du programme de santé — conception UX/UI et développement sur mesure pour une double audience bailleurs et terrain.",
-    placeholderLabel: "ONG · Santé publique — Site web ARISE Keneya Yiriwali",
-    image: "/images/site/Siteweb_Arise.jpg",
-  },
-  {
-    title: "NIGER EMPLOI — SPOT PUBLICITAIRE",
-    slug: "niger-emploi",
-    ytId: "1UfF72OEsmM",
-    description:
-      "Spot dynamique multi-formats pour la principale plateforme d'offres d'emploi du Niger.",
-    placeholderLabel: "Digital · Emploi — Spot Niger Emploi",
-    image: ytThumb("1UfF72OEsmM"),
-  },
-  {
-    title: "ANSI — TABLE RONDE DES BAILLEURS, PARIS",
-    slug: "ansi",
-    ytId: "NjAKRQmZIbQ",
-    description:
-      "Spot institutionnel haute exigence, projeté lors de la table ronde internationale pour la transformation numérique du Niger.",
-    placeholderLabel: "Institution publique — Film institutionnel ANSI",
-    image: ytThumb("NjAKRQmZIbQ"),
-  },
-  {
-    title: "CIPMEN — FILM ENTREPRENEURIAT",
-    slug: "cipmen",
-    ytId: "7e2KbO8m21Q",
-    description:
-      "Film documentaire sur les parcours d'entrepreneurs accompagnés par le centre d'incubation nigérien.",
-    placeholderLabel: "Entrepreneuriat · Niger — Film documentaire CIPMEN",
-    image: ytThumb("7e2KbO8m21Q"),
-  },
-  {
-    title: "COMPLAIT — SPOT PUBLICITAIRE",
-    slug: "complait",
-    ytId: "_AplCctINfE",
-    description:
-      "Spot court et percutant conçu et produit de A à Z — concept, tournage, montage et motion design.",
-    placeholderLabel: "Communication · Spot — COMPLAIT",
-    image: ytThumb("_AplCctINfE"),
-  },
-  {
-    title: "2SCALE / SNV — SUCCESS STORY",
-    slug: "2scale-snv",
-    ytId: "QhqzRDhcfck",
-    description:
-      "Film de success story pour le programme d'agribusiness inclusif SNV, aux standards de reporting bailleurs internationaux.",
-    placeholderLabel: "Agribusiness · ONG — Success story 2Scale SNV",
-    image: ytThumb("QhqzRDhcfck"),
-  },
-  {
-    title: "AET — PROJET PISCCA, NIAMEY",
-    slug: "aet",
-    ytId: "KPwU07osF80",
-    description:
-      "Retour vidéo sur le plaidoyer mené auprès de 50 filles-mères et mères célibataires — débats télévisés, radios communautaires en haoussa, société civile et autorités locales.",
-    placeholderLabel: "Social · Genre · Niger — Film plaidoyer AET PISCCA",
-    image: ytThumb("KPwU07osF80"),
-  },
-];
-
 function CardShell({
-  cs,
+  project,
   onPlay,
 }: {
-  cs: GalleryCaseStudy;
-  onPlay: (ytId: string) => void;
+  project: RealisationView;
+  onPlay: (youtubeId: string) => void;
 }) {
   // Texte superposé DANS la carte : la hauteur totale = la hauteur d'image,
-  // rien ne peut déborder. Vidéo → lightbox YouTube ; ARISE → lien du site.
+  // rien ne peut déborder. Vidéo → lightbox YouTube ; site → lien externe ;
+  // PDF → livret feuilletable sur /realisations.
   const content = (
     <>
       <Image
-        src={cs.image}
-        alt={cs.placeholderLabel}
+        src={project.coverUrl}
+        alt={project.coverAlt}
         fill
         className="object-cover transition-transform duration-500 group-hover:scale-105"
         sizes="(min-width: 1280px) 24vw, (min-width: 768px) 46vw, 92vw"
@@ -120,13 +38,13 @@ function CardShell({
       </div>
       <div className="absolute inset-x-0 bottom-0 p-5 text-left">
         <h3 className="font-heading uppercase text-base md:text-lg text-white line-clamp-2">
-          {cs.title}
+          {project.title}
         </h3>
         <p className="text-white/70 text-sm mt-1.5 line-clamp-2">
-          {cs.description}
+          {project.description}
         </p>
         <span className="inline-block text-brand-olive text-xs font-semibold uppercase tracking-wide mt-2 group-hover:underline">
-          {cs.ytId ? "▶ Regarder le film" : "Visiter le site →"}
+          {ACTION_LABEL[project.type]}
         </span>
       </div>
     </>
@@ -135,24 +53,36 @@ function CardShell({
   const shellClass =
     "group relative block w-full aspect-video rounded-2xl overflow-hidden bg-white/5 border border-white/10 cursor-pointer";
 
-  if (cs.ytId) {
+  if (project.type === "video" && project.youtubeId) {
+    const youtubeId = project.youtubeId;
     return (
       <button
         type="button"
-        onClick={() => onPlay(cs.ytId as string)}
-        aria-label={`Regarder le film : ${cs.title}`}
+        onClick={() => onPlay(youtubeId)}
+        aria-label={`Regarder le film : ${project.title}`}
         className={shellClass}
       >
         {content}
       </button>
     );
   }
+  if (project.type === "website" && project.externalUrl) {
+    return (
+      <a
+        href={project.externalUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Visiter le site : ${project.title}`}
+        className={shellClass}
+      >
+        {content}
+      </a>
+    );
+  }
   return (
     <a
-      href={cs.external}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`Visiter le site : ${cs.title}`}
+      href={`/realisations#${project.slug}`}
+      aria-label={`Voir le projet : ${project.title}`}
       className={shellClass}
     >
       {content}
@@ -160,7 +90,7 @@ function CardShell({
   );
 }
 
-export function WorkGallery() {
+export function WorkGallery({ projects }: { projects: RealisationView[] }) {
   const [lightbox, setLightbox] = useState<string | null>(null);
 
   useEffect(() => {
@@ -176,6 +106,9 @@ export function WorkGallery() {
     };
   }, [lightbox]);
 
+  // Aucun projet publié pour l'accueil : la section disparaît.
+  if (projects.length === 0) return null;
+
   return (
     <section id="realisations" className="bg-brand-navy text-white py-20 px-6 md:px-10">
       <div className="max-w-[1600px] mx-auto">
@@ -186,7 +119,7 @@ export function WorkGallery() {
                 Nos réalisations
               </p>
               <h2 className="font-heading uppercase text-3xl md:text-4xl leading-tight mt-3">
-                Huit projets, huit univers
+                {titreProjets(projects.length)}
               </h2>
             </div>
             <a
@@ -200,9 +133,9 @@ export function WorkGallery() {
         </Reveal>
 
         <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
-          {caseStudies.map((cs, i) => (
-            <Reveal key={cs.title} delay={(i % 4) * 70}>
-              <CardShell cs={cs} onPlay={setLightbox} />
+          {projects.map((project, i) => (
+            <Reveal key={project.slug} delay={(i % 4) * 70}>
+              <CardShell project={project} onPlay={setLightbox} />
             </Reveal>
           ))}
         </div>

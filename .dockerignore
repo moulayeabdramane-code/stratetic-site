@@ -11,3 +11,6 @@ README.md
 .claude
 # Application de facturation : construite séparément par sa propre ressource Coolify
 facturation
+# Données locales et secrets : jamais dans l'image
+data
+.env

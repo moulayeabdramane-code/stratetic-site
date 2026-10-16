@@ -1,0 +1,17 @@
+// Habillage Stratetic de l'admin Payload (navy #0d2438, olive #96b912).
+@layer payload {
+  // Écran de connexion : fond navy sous le logo blanc.
+  .template-minimal {
+    background-color: #0d2438;
+
+    // Libellés et lien « mot de passe oublié » lisibles sur le navy.
+    .field-label,
+    a {
+      color: #f5f5f0;
+    }
+  }
+
+  :root {
+    --theme-success-500: #96b912;
+  }
+}

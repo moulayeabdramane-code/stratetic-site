@@ -7,6 +7,7 @@ import sharp from "sharp";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Realisations } from "./collections/Realisations";
+import { onInit } from "./seed/onInit";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
@@ -43,4 +44,5 @@ export default buildConfig({
   csrf: [serverURL],
   sharp,
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
+  onInit,
 });

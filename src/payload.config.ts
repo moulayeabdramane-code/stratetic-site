@@ -9,13 +9,14 @@ import { Media } from "./collections/Media";
 import { Realisations } from "./collections/Realisations";
 import { onInit } from "./seed/onInit";
 import { migrations } from "./migrations";
+import { resolvePayloadSecret } from "./lib/secret";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
 
 export default buildConfig({
   serverURL,
-  secret: process.env.PAYLOAD_SECRET || "",
+  secret: resolvePayloadSecret(),
   admin: {
     user: Users.slug,
     theme: "light",

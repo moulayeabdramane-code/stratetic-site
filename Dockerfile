@@ -32,6 +32,8 @@ ENV HOSTNAME=0.0.0.0
 ENV DATABASE_URI=file:/data/stratetic.db
 ENV MEDIA_DIR=/data/media
 ENV BACKUP_DIR=/data/backups
+# Sans PAYLOAD_SECRET, le secret est généré au 1er démarrage et gardé ici.
+ENV PAYLOAD_SECRET_FILE=/data/.payload-secret
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs \

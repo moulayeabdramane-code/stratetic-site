@@ -42,8 +42,10 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-# Sauvegarde nocturne (tâche planifiée Coolify : node scripts/backup-db.mjs).
+# Sauvegarde nocturne (tâche planifiée Coolify : node scripts/backup-db.mjs)
+# et healthcheck Coolify (node scripts/healthcheck.mjs — pas de curl dans l'image).
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/backup-db.mjs ./scripts/backup-db.mjs
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/healthcheck.mjs ./scripts/healthcheck.mjs
 
 USER nextjs
 EXPOSE 3000

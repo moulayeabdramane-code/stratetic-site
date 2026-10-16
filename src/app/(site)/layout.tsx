@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Archivo } from "next/font/google";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
-import "./globals.css";
+import "../globals.css";
 
 const inter = Inter({
   variable: "--font-body",

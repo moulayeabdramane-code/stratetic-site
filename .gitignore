@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,4 +43,7 @@ next-env.d.ts
 
 # fichiers de travail (génération scroll-world + images brutes) — non servis
 /assets
+
+# Données Payload locales (base SQLite + médias). En prod : volume Coolify /data.
+/data
 

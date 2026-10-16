@@ -8,6 +8,7 @@ import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Realisations } from "./collections/Realisations";
 import { onInit } from "./seed/onInit";
+import { migrations } from "./migrations";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000";
@@ -37,6 +38,8 @@ export default buildConfig({
       url: process.env.DATABASE_URI || `file:${path.resolve(process.cwd(), "data/stratetic.db")}`,
     },
     wal: true,
+    // Appliquées au démarrage, en production uniquement (conteneur longue durée).
+    prodMigrations: migrations,
   }),
   // API REST seulement : GraphQL n'est pas utilisé (surface d'attaque en moins).
   graphQL: { disable: true },

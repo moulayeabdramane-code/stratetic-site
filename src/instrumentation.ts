@@ -3,6 +3,7 @@ export async function register() {
   if (process.env.NEXT_PHASE === "phase-production-build") return;
   // Payload n'existe que côté Node ; l'import conditionnel l'exclut du bundle Edge.
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    await import("./instrumentation-node");
+    const { initPayload } = await import("./instrumentation-node");
+    await initPayload();
   }
 }

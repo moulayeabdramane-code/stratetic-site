@@ -4,12 +4,6 @@ export interface NavLink {
   children?: { label: string; href: string }[];
 }
 
-export interface CaseStudy {
-  title: string;
-  description: string;
-  placeholderLabel: string;
-}
-
 export interface ServiceCard {
   title: string;
   description: string;

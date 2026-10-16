@@ -51,10 +51,20 @@ video clips play frame-by-frame, flying "into" each scene and connecting to the 
 
 ### Pages & content
 
-- `src/app/` App Router pages, all French: `/` plus `a-propos`, `services`, `realisations`, `blog`, `contact`, `confidentialite`, `mentions-legales`.
-- The home page (`app/page.tsx`) is `HeaderNav` + `ScrollWorldHero` + a stack of section components from `src/components/sections/`.
-- **Content is inline**, not from a CMS or data files: each section/page declares `const` arrays/objects at the top of its own file, typed against the interfaces in `src/types/content.ts`. To change copy, edit the component.
+- `src/app/(site)/` App Router pages, all French: `/` plus `a-propos`, `services`, `realisations`, `blog`, `contact`, `confidentialite`, `mentions-legales`.
+- The home page (`app/(site)/page.tsx`) is `HeaderNav` + `ScrollWorldHero` + a stack of section components from `src/components/sections/`.
+- **Content is inline** for most sections: each section/page declares `const` arrays/objects at the top of its own file, typed against `src/types/content.ts`. To change that copy, edit the component.
+- **Exception — Réalisations come from the Payload admin** (`/admin`): `src/lib/realisations.ts` reads them via the Payload Local API behind `unstable_cache` (tag `realisations`), invalidated by the collection hooks in `src/collections/hooks/revalidate.ts`. Pages that read Payload call `await connection()` so `next build` never needs the DB.
 - Shared building blocks: `components/motion/Reveal.tsx` (scroll-in animation), `components/sections/PageHero.tsx`, `components/ui/` (shadcn primitives).
+
+### Admin (Payload CMS 3)
+
+- Two root layouts via route groups: `src/app/(site)/` (the public site) and `src/app/(payload)/` (Payload admin + REST API — those files are Payload's generated boilerplate, don't edit them by hand).
+- Config: `src/payload.config.ts`. Collections in `src/collections/`. SQLite via `@payloadcms/db-sqlite` (`DATABASE_URI`), uploads in `MEDIA_DIR`. Both live on the Coolify volume `/data` in production.
+- `src/instrumentation.ts` → `instrumentation-node.ts` initialises Payload at server start: migrations (`prodMigrations`, production only), `ensureAdmin` (first admin from `INITIAL_ADMIN_EMAIL`/`INITIAL_ADMIN_PASSWORD`), and the idempotent seed in `src/seed/`. Any init failure exits the process with code 1 in production.
+- After changing a collection: `npm run payload -- generate:types`, then `npm run payload -- migrate:create <name>` and commit `src/migrations/`. After adding an admin custom component: `npm run payload -- generate:importmap`.
+- Files loaded by the Payload CLI (`payload.config.ts`, `collections/`, `seed/`, and the `lib/` helpers they import) use **relative imports**, not `@/`.
+- Local dev needs a `.env` (see `.env.example`) and a `data/` folder (both gitignored). Reset local content: stop the server, `rm -rf data && mkdir -p data/media`, restart (admin + seed are recreated).
 
 ### Design tokens
 
@@ -67,5 +77,6 @@ site ships **light-only** (no theme toggle is wired).
 
 ## Deployment
 
-- `next.config.ts` sets `output: "standalone"` (minimal `.next/standalone` server) and `images.unoptimized: true` (images are pre-sized `.webp` served as-is — **no `sharp` at runtime**; don't reach for `next/image` optimization).
-- Multi-stage `Dockerfile` (`node:20-slim`) → standalone runner on **Coolify** (VPS, domain stratetic.art). It uses `npm install` **not `npm ci`** on purpose, to tolerate npm 10/11 lockfile drift — keep it that way.
+- `next.config.ts` sets `output: "standalone"` (minimal `.next/standalone` server) and `images.unoptimized: true` (the site's own images are pre-sized `.webp` served as-is; don't reach for `next/image` optimization), wrapped in `withPayload`. `sharp` is installed **only for Payload** (admin-uploaded image variants); `outputFileTracingIncludes` ships `node_modules/@img/**` because Next's tracer misses the native libvips libraries — removing it makes the standalone server crash at startup.
+- Multi-stage `Dockerfile` (`node:22-slim`) → standalone runner on **Coolify** (VPS, domain stratetic.art). It uses `npm install` **not `npm ci`** on purpose, to tolerate npm 10/11 lockfile drift — keep it that way.
+- Coolify needs a persistent volume on `/data` and the env vars `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `INITIAL_ADMIN_EMAIL`, `INITIAL_ADMIN_PASSWORD` (`DATABASE_URI`/`MEDIA_DIR`/`BACKUP_DIR` default to `/data/...` in the Dockerfile). Nightly backup = Coolify scheduled task `node scripts/backup-db.mjs`.

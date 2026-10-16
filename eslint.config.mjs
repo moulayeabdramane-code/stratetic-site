@@ -14,6 +14,10 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Application de facturation (projet séparé, voir facturation/README.md)
     "facturation/**",
+    // Fichiers générés par Payload
+    "src/payload-types.ts",
+    "src/migrations/**",
+    "src/app/(payload)/admin/importMap.js",
   ]),
 ]);
 
